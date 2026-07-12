@@ -112,6 +112,10 @@ export const authAPI = {
   updateProfile: async (data) => {
     const res = await api.put('/auth/profile', data);
     return res.data;
+  },
+  getAllUsers: async () => {
+    const res = await api.get('/auth/users');
+    return res.data;
   }
 };
 
@@ -122,6 +126,10 @@ export const browseAPI = {
   },
   getOwnedRestaurant: async () => {
     const res = await api.get('/restaurants/owned');
+    return res.data;
+  },
+  updateOwnedRestaurant: async (restaurantData) => {
+    const res = await api.put('/restaurants/owned', restaurantData);
     return res.data;
   },
   addMenuItem: async (itemData) => {
@@ -165,6 +173,10 @@ export const orderAPI = {
   },
   updateStatus: async (id, status) => {
     const res = await api.patch(`/orders/${id}/status`, { status });
+    return res.data;
+  },
+  getAllOrders: async () => {
+    const res = await api.get('/orders');
     return res.data;
   }
 };
@@ -210,6 +222,21 @@ export const chatbotAPI = {
   },
   escalate: async () => {
     const res = await api.post('/chatbot/escalate');
+    return res.data;
+  }
+};
+
+export const offerAPI = {
+  getOffers: async () => {
+    const res = await api.get('/offers');
+    return res.data;
+  },
+  createOffer: async (data) => {
+    const res = await api.post('/offers', data);
+    return res.data;
+  },
+  deleteOffer: async (id) => {
+    const res = await api.delete(`/offers/${id}`);
     return res.data;
   }
 };

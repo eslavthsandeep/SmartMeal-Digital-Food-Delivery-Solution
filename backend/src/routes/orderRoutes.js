@@ -5,13 +5,15 @@ import {
   getMyOrders,
   getRestaurantOrders,
   updateOrderStatus,
-  getUnassignedOrders
+  getUnassignedOrders,
+  getAllOrders
 } from '../controllers/orderController.js';
 import protect from '../middlewares/auth.js';
 
 const router = express.Router();
 
 router.post('/', protect, createOrder);
+router.get('/', protect, getAllOrders);
 router.get('/customer/me', protect, getMyOrders);
 router.get('/unassigned', protect, getUnassignedOrders);
 router.get('/restaurant/:restaurantId', protect, getRestaurantOrders);

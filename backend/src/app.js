@@ -13,6 +13,7 @@ import orderRoutes from './routes/orderRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import deliveryRoutes from './routes/deliveryRoutes.js';
 import chatbotRoutes from './routes/chatbotRoutes.js';
+import offerRoutes from './routes/offerRoutes.js';
 import errorHandler from './middlewares/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -57,6 +58,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/offers', offerRoutes);
 
 // Base route health check
 app.get('/health', (req, res) => {

@@ -167,4 +167,33 @@ export const toggleMenuItem = async (req, res, next) => {
   }
 };
 
+// @desc    Update owned restaurant details
+// @route   PUT /api/restaurants/owned
+// @access  Private (Restaurant owner only)
+export const updateOwnedRestaurant = async (req, res, next) => {
+  const { name, cuisines, minOrderValue, deliveryFee, coverImage, isOpen } = req.body;
+
+  try {
+    const restaurant = await Restaurant.findOne({ ownerId: req.user._id });
+    if (!restaurant) {
+      return res.status(404).json({ success: false, message: 'Restaurant profile not found' });
+    }
+
+    if (name) restaurant.name = name;
+    if (cuisines) {
+      restaurant.cuisines = Array.isArray(cuisines) ? cuisines : cuisines.split(',').map(c => c.trim());
+    }
+    if (minOrderValue !== undefined) restaurant.minOrderValue = parseFloat(minOrderValue);
+    if (deliveryFee !== undefined) restaurant.deliveryFee = parseFloat(deliveryFee);
+    if (coverImage) restaurant.coverImage = coverImage;
+    if (isOpen !== undefined) restaurant.isOpen = isOpen;
+
+    await restaurant.save();
+
+    res.json({ success: true, message: 'Restaurant updated successfully', data: restaurant });
+  } catch (error) {
+    next(error);
+  }
+};
+
 

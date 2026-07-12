@@ -162,8 +162,7 @@ export const updateDeliveryStatus = async (req, res, next) => {
 export const getMyDeliveries = async (req, res, next) => {
   try {
     const deliveries = await Delivery.find({
-      deliveryPersonnelId: req.user.id,
-      status: { $ne: 'delivered' } // active ones
+      deliveryPersonnelId: req.user.id
     })
       .populate({
         path: 'orderId',

@@ -6,7 +6,8 @@ import {
   refreshAccessToken,
   logoutUser,
   getUserProfile,
-  updateUserProfile
+  updateUserProfile,
+  getAllUsers
 } from '../controllers/authController.js';
 import protect from '../middlewares/auth.js';
 import validate from '../middlewares/validate.js';
@@ -43,5 +44,6 @@ router.post('/refresh', refreshAccessToken);
 router.post('/logout', logoutUser);
 router.get('/profile', protect, getUserProfile);
 router.put('/profile', protect, updateUserProfile);
+router.get('/users', protect, getAllUsers);
 
 export default router;

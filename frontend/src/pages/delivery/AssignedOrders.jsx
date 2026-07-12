@@ -94,7 +94,11 @@ export const AssignedOrders = () => {
     }
   };
 
-  const activeJobs = myJobsData?.data || [];
+  const allDeliveries = myJobsData?.data || [];
+  const activeJobs = allDeliveries.filter(d => d.status !== 'delivered' && d.status !== 'cancelled');
+  const completedJobs = allDeliveries.filter(d => d.status === 'delivered');
+  const totalEarnings = completedJobs.reduce((sum, d) => sum + (d.orderId?.deliveryFee || 40), 0);
+
   const boardOrders = boardData?.data || [];
 
   return (
@@ -111,6 +115,27 @@ export const AssignedOrders = () => {
         </div>
         <div className="p-3 bg-emerald-600 rounded-2xl animate-pulse-soft">
           <Bike className="w-6 h-6 text-white" />
+        </div>
+      </div>
+
+      {/* Stats bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">💰 Lifetime Earnings</p>
+          <p className="text-2xl font-black text-brand-600 mt-1">₹{totalEarnings}</p>
+          <p className="text-[10px] text-slate-400 mt-1">Direct payout from delivery fees</p>
+        </div>
+
+        <div className="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">📦 Completed Gigs</p>
+          <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{completedJobs.length} Deliveries</p>
+          <p className="text-[10px] text-slate-400 mt-1">Orders successfully delivered</p>
+        </div>
+
+        <div className="p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">🏍️ Active Duty</p>
+          <p className="text-2xl font-black text-amber-600 mt-1">{activeJobs.length} Assigned</p>
+          <p className="text-[10px] text-slate-400 mt-1">Jobs currently being processed</p>
         </div>
       </div>
 

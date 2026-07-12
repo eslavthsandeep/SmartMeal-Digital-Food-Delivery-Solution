@@ -234,3 +234,18 @@ export const updateUserProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get all users (Admin only)
+// @route   GET /api/auth/users
+// @access  Private (Admin only)
+export const getAllUsers = async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized, Admin only' });
+    }
+    const users = await User.find({}, '-password');
+    res.json({ success: true, count: users.length, data: users });
+  } catch (error) {
+    next(error);
+  }
+};

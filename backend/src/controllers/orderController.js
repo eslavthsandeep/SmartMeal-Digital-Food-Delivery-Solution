@@ -229,3 +229,22 @@ export const getUnassignedOrders = async (req, res, next) => {
   }
 };
 
+// @desc    Get all orders (Admin only)
+// @route   GET /api/orders
+// @access  Private (Admin only)
+export const getAllOrders = async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Not authorized, Admin only' });
+    }
+    const orders = await Order.find({})
+      .populate('customerId', 'name email')
+      .populate('restaurantId', 'name')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, count: orders.length, data: orders });
+  } catch (error) {
+    next(error);
+  }
+};
+

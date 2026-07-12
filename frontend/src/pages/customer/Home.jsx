@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { browseAPI } from '../../services/api.js';
+import { browseAPI, offerAPI } from '../../services/api.js';
 import Loader from '../../components/common/Loader.jsx';
-import { Search, Star, Clock, MapPin, Sparkles } from 'lucide-react';
+import { Search, Star, Clock, MapPin, Sparkles, Tag } from 'lucide-react';
 
 const CATEGORIES = [
   { name: 'All', icon: '🍽️' },
@@ -19,6 +19,13 @@ export const Home = () => {
   const [searchVal, setSearchVal] = useState('');
   
   const navigate = useNavigate();
+
+  // Fetch active promotional offers
+  const { data: offersData } = useQuery({
+    queryKey: ['active-offers'],
+    queryFn: offerAPI.getOffers
+  });
+  const offers = offersData?.data || [];
 
   // React Query to fetch restaurants
   const { data, isLoading, isError } = useQuery({
@@ -39,6 +46,46 @@ export const Home = () => {
 
   return (
     <div className="space-y-10 pb-16">
+      
+      {/* 1. SPECIAL FESTIVAL OFFERS (ADMIN PLACED) */}
+      {offers.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <Sparkles className="w-5 h-5 text-amber-500 fill-amber-500" /> Exclusive Offers & Coupons
+          </h2>
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory">
+            {offers.map((off) => (
+              <div
+                key={off._id}
+                className="relative min-w-[280px] md:min-w-[400px] h-40 rounded-3xl overflow-hidden shadow-md flex-shrink-0 snap-center bg-slate-900 text-white group"
+              >
+                {/* Banner background */}
+                <img
+                  src={off.bannerImage || 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&q=80&w=600'}
+                  alt={off.title}
+                  className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/40 to-transparent"></div>
+                
+                {/* Content */}
+                <div className="absolute bottom-4 left-5 right-5 space-y-2">
+                  <h3 className="font-extrabold text-sm md:text-base line-clamp-1">{off.title}</h3>
+                  <p className="text-[10px] text-slate-300 line-clamp-2">{off.description}</p>
+                  <div className="flex gap-2 text-[9px] font-extrabold uppercase pt-1">
+                    <span className="px-2 py-0.5 bg-brand-600/90 text-white rounded flex items-center gap-0.5 border border-brand-500">
+                      <Tag className="w-2.5 h-2.5" /> CODE: {off.discountCode}
+                    </span>
+                    <span className="px-2 py-0.5 bg-emerald-500/90 text-white rounded border border-emerald-400">
+                      🏷️ {off.discountPercent}% OFF
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
       {/* 1. HERO BANNER WITH GLASSMORPHISM SEARCH */}
       <section className="relative rounded-3xl overflow-hidden py-16 px-6 md:px-12 bg-gradient-to-r from-brand-600 to-rose-500 text-white shadow-xl">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>

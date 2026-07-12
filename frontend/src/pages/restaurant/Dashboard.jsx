@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { browseAPI, orderAPI, deliveryAPI } from '../../services/api.js';
+import { browseAPI, orderAPI } from '../../services/api.js';
 import { useSocket } from '../../context/SocketContext.jsx';
 import { useToastStore } from '../../store/toastStore.js';
 import Loader from '../../components/common/Loader.jsx';
-import { ChefHat, BellRing, PackageCheck, ClipboardList, CheckCircle, Play, Sparkles, Plus, Leaf, Eye, EyeOff } from 'lucide-react';
+import { ChefHat, BellRing, PackageCheck, ClipboardList, CheckCircle, Play, Sparkles, Plus, Leaf, Eye, EyeOff, Settings, Save, Store } from 'lucide-react';
 
 export const RestaurantDashboard = () => {
   const queryClient = useQueryClient();
@@ -12,7 +12,7 @@ export const RestaurantDashboard = () => {
   const { socket, joinRestaurantRoom } = useSocket();
 
   const [restaurant, setRestaurant] = useState(null);
-  const [activeTab, setActiveTab] = useState('orders'); // orders, menu
+  const [activeTab, setActiveTab] = useState('orders'); // orders, menu, settings
   const [isAddingDish, setIsAddingDish] = useState(false);
 
   // Form State for Adding Dishes
@@ -22,6 +22,14 @@ export const RestaurantDashboard = () => {
   const [newDishDescription, setNewDishDescription] = useState('');
   const [newDishIsVeg, setNewDishIsVeg] = useState(true);
   const [newDishImage, setNewDishImage] = useState('');
+
+  // Settings form states
+  const [editName, setEditName] = useState('');
+  const [editCuisines, setEditCuisines] = useState('');
+  const [editCoverImage, setEditCoverImage] = useState('');
+  const [editMinOrder, setEditMinOrder] = useState('');
+  const [editDeliveryFee, setEditDeliveryFee] = useState('');
+  const [editIsOpen, setEditIsOpen] = useState(true);
 
   // 1. Fetch owned restaurant details
   const { data: resData, isLoading: resLoading, isError: resError } = useQuery({
@@ -34,6 +42,18 @@ export const RestaurantDashboard = () => {
       setRestaurant(resData.data);
     }
   }, [resData]);
+
+  // Prepopulate settings when restaurant loads
+  useEffect(() => {
+    if (restaurant) {
+      setEditName(restaurant.name || '');
+      setEditCuisines(restaurant.cuisines?.join(', ') || '');
+      setEditCoverImage(restaurant.coverImage || '');
+      setEditMinOrder(restaurant.minOrderValue || '');
+      setEditDeliveryFee(restaurant.deliveryFee || '');
+      setEditIsOpen(restaurant.isOpen !== false);
+    }
+  }, [restaurant]);
 
   // 2. Fetch restaurant orders
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
@@ -93,6 +113,19 @@ export const RestaurantDashboard = () => {
     }
   });
 
+  // Edit Restaurant Details mutation
+  const updateRestaurantMutation = useMutation({
+    mutationFn: (restData) => browseAPI.updateOwnedRestaurant(restData),
+    onSuccess: (res) => {
+      addToast('Restaurant profile updated successfully!', 'success');
+      setRestaurant(res.data);
+      queryClient.invalidateQueries(['owned-restaurant']);
+    },
+    onError: (err) => {
+      addToast(err.response?.data?.message || 'Could not update details', 'error');
+    }
+  });
+
   // Socket event binding
   useEffect(() => {
     if (!socket || !restaurant?._id) return;
@@ -149,6 +182,23 @@ export const RestaurantDashboard = () => {
     });
   };
 
+  const handleSettingsSubmit = (e) => {
+    e.preventDefault();
+    if (!editName || !editCuisines || !editMinOrder || !editDeliveryFee) {
+      addToast('Please complete all required fields', 'error');
+      return;
+    }
+
+    updateRestaurantMutation.mutate({
+      name: editName,
+      cuisines: editCuisines,
+      coverImage: editCoverImage,
+      minOrderValue: editMinOrder,
+      deliveryFee: editDeliveryFee,
+      isOpen: editIsOpen
+    });
+  };
+
   if (resLoading) return <Loader type="spinner" />;
   if (resError || !restaurant) {
     return (
@@ -169,15 +219,16 @@ export const RestaurantDashboard = () => {
     <div className="space-y-8 pb-16">
       
       {/* Header banner */}
-      <div className="flex justify-between items-center p-6 bg-slate-900 text-white rounded-3xl shadow-sm">
-        <div>
+      <div className="flex justify-between items-center p-6 bg-slate-900 text-white rounded-3xl shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
+        <div className="relative">
           <span className="text-[10px] font-bold tracking-wider bg-white/20 px-2 py-0.5 rounded">
             MERCHANT PORTAL
           </span>
           <h1 className="text-2xl font-extrabold mt-1">{restaurant.name}</h1>
           <p className="text-xs text-slate-355">{restaurant.address.addressLine}, {restaurant.address.city}</p>
         </div>
-        <div className="p-3 bg-brand-600 rounded-2xl animate-pulse-soft">
+        <div className="p-3 bg-brand-600 rounded-2xl animate-pulse-soft relative">
           <ChefHat className="w-6 h-6 text-white" />
         </div>
       </div>
@@ -204,10 +255,20 @@ export const RestaurantDashboard = () => {
         >
           Manage Menu & Dishes
         </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`flex-1 py-3 text-sm font-bold border-b-2 text-center transition-colors ${
+            activeTab === 'settings'
+              ? 'border-brand-600 text-brand-600 dark:text-brand-400'
+              : 'border-transparent text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          Restaurant Settings
+        </button>
       </div>
 
       {/* RENDER ACTIVE TAB */}
-      {activeTab === 'orders' ? (
+      {activeTab === 'orders' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Active Orders List */}
@@ -313,7 +374,9 @@ export const RestaurantDashboard = () => {
             </div>
           </div>
         </div>
-      ) : (
+      )}
+
+      {activeTab === 'menu' && (
         /* MENU MANAGEMENT VIEW */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
@@ -439,7 +502,7 @@ export const RestaurantDashboard = () => {
                   <div
                     key={item._id}
                     className={`p-4 bg-white dark:bg-slate-800 border rounded-2xl shadow-sm flex items-center justify-between transition-opacity ${
-                      item.isAvailable ? 'opacity-100' : 'opacity-60'
+                      item.isAvailable ? 'opacity-100' : 'opacity-65'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -506,6 +569,128 @@ export const RestaurantDashboard = () => {
                 <span className="text-slate-850 dark:text-slate-200 font-bold">
                   {menuItems.filter(i => i.isAvailable).length} Dishes
                 </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        /* RESTAURANT SETTINGS TAB */
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+          
+          <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm space-y-6">
+            <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 pb-2.5 border-b">
+              <Settings className="w-5 h-5 text-brand-500" /> Outlet Customization
+            </h2>
+
+            <form onSubmit={handleSettingsSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Restaurant Name *</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 border rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cuisines (Comma-separated) *</label>
+                  <input
+                    type="text"
+                    value={editCuisines}
+                    onChange={(e) => setEditCuisines(e.target.value)}
+                    placeholder="e.g. North Indian, Chinese, Mughlai"
+                    className="w-full px-3.5 py-2.5 border rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cover Image URL</label>
+                <input
+                  type="text"
+                  value={editCoverImage}
+                  onChange={(e) => setEditCoverImage(e.target.value)}
+                  className="w-full px-3.5 py-2.5 border rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Min Order Value (₹) *</label>
+                  <input
+                    type="number"
+                    value={editMinOrder}
+                    onChange={(e) => setEditMinOrder(e.target.value)}
+                    className="w-full px-3.5 py-2.5 border rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Delivery Fee (₹) *</label>
+                  <input
+                    type="number"
+                    value={editDeliveryFee}
+                    onChange={(e) => setEditDeliveryFee(e.target.value)}
+                    className="w-full px-3.5 py-2.5 border rounded-xl bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col justify-end pb-1">
+                  <button
+                    type="button"
+                    onClick={() => setEditIsOpen(!editIsOpen)}
+                    className={`w-full py-2.5 border rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                      editIsOpen
+                        ? 'bg-emerald-50 border-emerald-250 text-emerald-700 dark:bg-emerald-950/20'
+                        : 'bg-rose-50 border-rose-250 text-rose-700 dark:bg-rose-950/20'
+                    }`}
+                  >
+                    <Store className="w-4 h-4" />
+                    {editIsOpen ? 'Status: OPEN' : 'Status: CLOSED'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4 border-t">
+                <button
+                  type="submit"
+                  disabled={updateRestaurantMutation.isPending}
+                  className="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-brand-500/10 active:scale-95 transition-all"
+                >
+                  <Save className="w-4 h-4" />
+                  {updateRestaurantMutation.isPending ? 'Saving...' : 'Save Settings'}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Sidebar preview */}
+          <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col h-fit">
+            <div className="relative h-32 w-full bg-slate-150">
+              <img src={editCoverImage || restaurant.coverImage} alt={editName} className="h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-black/40"></div>
+              <div className="absolute bottom-4 left-4 text-white">
+                <h4 className="font-extrabold text-sm">{editName || restaurant.name}</h4>
+                <p className="text-[10px] text-white/80 line-clamp-1 mt-0.5">{editCuisines || restaurant.cuisines?.join(', ')}</p>
+              </div>
+            </div>
+            <div className="p-4 space-y-2.5 text-xs font-semibold text-slate-500">
+              <div className="flex justify-between">
+                <span>Minimum Order</span>
+                <span className="text-slate-800 dark:text-slate-200">₹{editMinOrder}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Rider Fee</span>
+                <span className="text-slate-800 dark:text-slate-200">₹{editDeliveryFee}</span>
               </div>
             </div>
           </div>
