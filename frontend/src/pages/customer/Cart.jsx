@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore.js';
 import { useToastStore } from '../../store/toastStore.js';
-import { ShoppingBag, ArrowRight, Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Trash2, Plus, Minus, ArrowLeft, Sparkles, Receipt, Crown } from 'lucide-react';
 
 export const Cart = () => {
   const navigate = useNavigate();
@@ -25,92 +25,127 @@ export const Cart = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
-        <span className="text-6xl animate-pulse">🛒</span>
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 mt-4">Your Cart is Empty</h2>
-        <p className="text-slate-400 text-sm mt-1 mb-6">Add dishes from restaurants to satisfy your hunger cravings.</p>
-        <button
-          onClick={() => navigate('/')}
-          className="px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-semibold shadow-md active:scale-95 transition-all text-sm"
-        >
-          Browse Restaurants
-        </button>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-8 animate-fade-in">
+        <div className="glass-card rounded-3xl p-10 max-w-md w-full space-y-6 border border-royal-500/10">
+          {/* Decorative icon */}
+          <div className="relative mx-auto w-24 h-24">
+            <div className="absolute inset-0 bg-royal-500/10 rounded-full animate-pulse-soft"></div>
+            <div className="absolute inset-2 bg-surface-50 dark:bg-noir-500 rounded-full flex items-center justify-center shadow-card">
+              <ShoppingBag className="w-10 h-10 text-royal-500 animate-bounce-soft" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="font-display text-2xl font-bold text-gold-gradient text-shimmer">
+              Your Cart is Empty
+            </h2>
+            <p className="text-noir-200 dark:text-surface-300 text-sm font-medium">
+              Add exquisite dishes from our curated restaurants to begin your culinary journey.
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate('/')}
+            className="btn-royal px-8 py-3.5 rounded-xl font-bold text-sm inline-flex items-center gap-2 mx-auto"
+          >
+            <Sparkles className="w-4 h-4" />
+            Browse Restaurants
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-16">
+    <div className="space-y-6 pb-16 animate-fade-in">
+      {/* Top bar with back + clear */}
       <div className="flex justify-between items-center">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-slate-200"
+          className="group inline-flex items-center gap-2 text-sm font-semibold text-noir-300 dark:text-surface-300 hover:text-royal-600 dark:hover:text-royal-400 transition-all duration-300"
         >
-          <ArrowLeft className="w-4 h-4" /> Continue Shopping
+          <span className="w-8 h-8 rounded-xl bg-surface-100 dark:bg-noir-500 flex items-center justify-center group-hover:bg-royal-500/10 group-hover:shadow-glow-gold-sm transition-all duration-300">
+            <ArrowLeft className="w-4 h-4" />
+          </span>
+          Continue Shopping
         </button>
         <button
           onClick={() => {
             clearCart();
             addToast('Cart cleared', 'info');
           }}
-          className="text-xs font-semibold text-rose-500 hover:text-rose-600 flex items-center gap-1"
+          className="btn-danger px-3 py-1.5 rounded-lg text-xs font-bold inline-flex items-center gap-1.5 transition-all duration-300 active:scale-95"
         >
           <Trash2 className="w-3.5 h-3.5" /> Clear Cart
         </button>
       </div>
 
-      <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">Shopping Cart</h1>
-      <p className="text-xs font-bold text-slate-400 -mt-3">From: {restaurantName}</p>
+      {/* Page heading */}
+      <div className="space-y-1 animate-fade-in-up">
+        <h1 className="font-display text-3xl font-bold text-gold-gradient">
+          Shopping Cart
+        </h1>
+        <div className="flex items-center gap-2">
+          <Crown className="w-3.5 h-3.5 text-royal-500" />
+          <p className="text-xs font-bold text-noir-200 dark:text-surface-300">
+            From: <span className="text-royal-600 dark:text-royal-400">{restaurantName}</span>
+          </p>
+        </div>
+      </div>
+
+      <div className="gold-divider"></div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Item list */}
         <div className="lg:col-span-2 space-y-4">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <div
               key={item.menuItemId}
-              className="flex justify-between items-center p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm"
+              className="card-royal-static flex justify-between items-center p-5 rounded-2xl animate-fade-in-up"
+              style={{ animationDelay: `${index * 60}ms` }}
             >
-              <div className="space-y-1">
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={`w-3 border text-[8px] flex items-center justify-center flex-shrink-0 ${
-                      item.isVeg ? 'border-emerald-500 text-emerald-500' : 'border-red-500 text-red-500'
-                    }`}
-                  >
-                    ●
-                  </span>
-                  <h3 className="font-bold text-slate-950 dark:text-white text-sm">{item.name}</h3>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className={item.isVeg ? 'veg-indicator' : 'nonveg-indicator'}></span>
+                  <h3 className="font-bold text-noir-600 dark:text-surface-50 text-sm">
+                    {item.name}
+                  </h3>
                 </div>
-                <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold">₹{item.price} each</p>
+                <p className="text-xs text-noir-200 dark:text-surface-300 font-semibold">
+                  ₹{item.price} each
+                </p>
               </div>
 
-              <div className="flex items-center gap-6">
-                <div className="flex items-center bg-slate-100 dark:bg-slate-900 rounded-xl h-8 px-2 gap-2 text-sm font-semibold text-slate-800 dark:text-white">
+              <div className="flex items-center gap-5">
+                {/* Quantity controls */}
+                <div className="flex items-center border-2 border-royal-500/30 dark:border-royal-500/20 rounded-xl h-9 px-1.5 gap-1 text-sm font-bold text-noir-600 dark:text-surface-50 bg-surface-50 dark:bg-noir-500">
                   <button
                     onClick={() => updateQuantity(item.menuItemId, item.quantity - 1)}
-                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-slate-500"
+                    className="w-7 h-7 flex items-center justify-center hover:bg-royal-500/10 rounded-lg text-royal-500 transition-all duration-200 active:scale-90"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span>{item.quantity}</span>
+                  <span className="min-w-[20px] text-center font-bold">{item.quantity}</span>
                   <button
                     onClick={() => updateQuantity(item.menuItemId, item.quantity + 1)}
-                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-slate-500"
+                    className="w-7 h-7 flex items-center justify-center hover:bg-royal-500/10 rounded-lg text-royal-500 transition-all duration-200 active:scale-90"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 
-                <span className="w-16 text-right font-bold text-slate-900 dark:text-white text-sm">
+                {/* Item total */}
+                <span className="w-16 text-right font-bold text-royal-600 dark:text-royal-400 text-sm">
                   ₹{item.price * item.quantity}
                 </span>
 
+                {/* Remove button */}
                 <button
                   onClick={() => {
                     removeItem(item.menuItemId);
                     addToast(`Removed ${item.name}`, 'info');
                   }}
-                  className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-noir-200 dark:text-surface-400 hover:text-red-500 hover:bg-red-500/10 transition-all duration-200"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -120,31 +155,41 @@ export const Cart = () => {
         </div>
 
         {/* Pricing totals box */}
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-100 dark:border-slate-700 shadow-sm space-y-6 h-fit">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white pb-3 border-b border-slate-100 dark:border-slate-700">
-            Bill Details
-          </h2>
+        <div className="glass-card rounded-3xl p-6 border border-royal-500/20 space-y-5 h-fit animate-fade-in-up sticky top-24">
+          <div className="flex items-center gap-2.5 pb-4">
+            <div className="w-9 h-9 rounded-xl bg-royal-500/10 flex items-center justify-center">
+              <Receipt className="w-4.5 h-4.5 text-royal-500" />
+            </div>
+            <h2 className="font-display text-lg font-bold text-noir-600 dark:text-surface-50">
+              Bill Details
+            </h2>
+          </div>
 
-          <div className="space-y-3.5 text-sm font-semibold text-slate-500 dark:text-slate-455">
+          <div className="gold-divider"></div>
+
+          <div className="space-y-4 text-sm font-semibold">
             <div className="flex justify-between">
-              <span>Item Subtotal</span>
-              <span className="text-slate-800 dark:text-slate-200">₹{subtotal}</span>
+              <span className="text-noir-200 dark:text-surface-300">Item Subtotal</span>
+              <span className="text-noir-600 dark:text-surface-100 font-bold">₹{subtotal}</span>
             </div>
             <div className="flex justify-between">
-              <span>Delivery Partner Fee</span>
-              <span className="text-slate-800 dark:text-slate-200">₹{deliveryFee}</span>
+              <span className="text-noir-200 dark:text-surface-300">Delivery Partner Fee</span>
+              <span className="text-noir-600 dark:text-surface-100 font-bold">₹{deliveryFee}</span>
             </div>
             
-            <div className="flex justify-between text-base font-bold text-slate-900 dark:text-white pt-4 border-t border-slate-55 dark:border-slate-750">
-              <span>To Pay</span>
-              <span className="text-brand-600">₹{total}</span>
+            <div className="gold-divider"></div>
+
+            <div className="flex justify-between text-base font-bold pt-1">
+              <span className="text-noir-600 dark:text-surface-50">To Pay</span>
+              <span className="text-royal-600 dark:text-royal-400 text-lg">₹{total}</span>
             </div>
           </div>
 
           <button
             onClick={handleCheckoutRedirect}
-            className="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-md hover:shadow-brand-500/20 active:scale-[0.98] transition-all text-sm"
+            className="btn-royal w-full py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 text-sm mt-2"
           >
+            <Sparkles className="w-4 h-4" />
             Confirm & Proceed
             <ArrowRight className="w-4 h-4" />
           </button>

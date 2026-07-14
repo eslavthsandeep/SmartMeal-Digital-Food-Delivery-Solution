@@ -16,14 +16,20 @@ export const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden animate-slide-up border border-slate-100 dark:border-slate-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-noir-600/70 backdrop-blur-md animate-fade-in">
+      {/* Backdrop click target */}
+      <div className="absolute inset-0" onClick={onClose}></div>
+
+      {/* Modal Panel */}
+      <div className="relative w-full max-w-md glass-card rounded-2xl shadow-glow-gold overflow-hidden animate-scale-in border-t-2 border-royal-500">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
+        <div className="flex items-center justify-between p-5 border-b border-royal-500/15 dark:border-royal-500/10">
+          <h3 className="text-lg font-display font-bold text-noir-600 dark:text-surface-50 tracking-wide">
+            {title}
+          </h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
+            className="p-1.5 rounded-xl text-noir-200 dark:text-surface-300 hover:text-royal-500 dark:hover:text-royal-400 hover:bg-royal-500/10 transition-all duration-300 hover:shadow-glow-gold-sm hover:rotate-90"
           >
             <X className="w-5 h-5" />
           </button>

@@ -24,7 +24,10 @@ import ChatbotWidget from './components/chatbot/ChatbotWidget.jsx';
 import ToastContainer from './components/common/ToastContainer.jsx';
 
 // Icons
-import { ShoppingCart, User, Sun, Moon, LogOut, Coffee } from 'lucide-react';
+import { ShoppingCart, User, Sun, Moon, LogOut, UtensilsCrossed, Crown, Search as SearchIcon } from 'lucide-react';
+
+// Styles
+import './App.css';
 
 const queryClient = new QueryClient();
 
@@ -37,7 +40,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(user?.role)) {
-    // Redirection rules on role clash
     if (user?.role === 'restaurant') return <Navigate to="/restaurant/dashboard" replace />;
     if (user?.role === 'delivery_personnel') return <Navigate to="/delivery/orders" replace />;
     if (user?.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
@@ -65,48 +67,67 @@ const AppLayout = ({ theme, setTheme }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-surface-50 dark:bg-noir-400 transition-colors duration-300">
       
-      {/* 1. NAVIGATION HEADER */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 transition-colors">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      {/* ════════ NAVIGATION HEADER ════════ */}
+      <header className="sticky top-0 z-50 glass-nav transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-1.5 text-slate-900 dark:text-white font-extrabold text-xl font-sans tracking-tight">
-            <span className="p-1.5 bg-brand-500 text-white rounded-xl shadow-md"><Coffee className="w-5 h-5" /></span>
-            <span>FoodExpress</span>
+          <Link to="/" className="flex items-center gap-2 group">
+            <span className="relative p-2 bg-gold-gradient rounded-xl shadow-btn group-hover:shadow-btn-hover transition-all duration-300 group-hover:scale-105">
+              <UtensilsCrossed className="w-5 h-5 text-white" />
+              <Crown className="w-2.5 h-2.5 text-royal-200 absolute -top-1 -right-1 animate-bounce-soft" />
+            </span>
+            <span className="text-xl font-display font-bold tracking-tight text-noir-400 dark:text-surface-50 group-hover:text-royal-600 dark:group-hover:text-royal-400 transition-colors">
+              Smart<span className="text-gold-gradient bg-clip-text text-transparent">Meal</span>
+            </span>
           </Link>
 
-          {/* Links menu */}
-          <div className="flex items-center gap-4">
+          {/* Right-side Actions */}
+          <div className="flex items-center gap-1 sm:gap-2">
             
+            {/* Search Link (for customers) */}
+            {isAuthenticated && user?.role === 'customer' && (
+              <Link
+                to="/search"
+                className="p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300"
+                title="Search"
+              >
+                <SearchIcon className="w-5 h-5" />
+              </Link>
+            )}
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-all active:scale-95"
+              className="p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-500 hover:bg-royal-500/5 dark:hover:bg-royal-500/10 transition-all duration-300 active:scale-90"
+              title={theme === 'light' ? 'Dark mode' : 'Light mode'}
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
 
-            {/* Render items by Roles */}
+            {/* Render items by Role */}
             {isAuthenticated ? (
               <>
                 {user?.role === 'customer' && (
                   <>
                     <Link
                       to="/cart"
-                      className="relative p-2.5 rounded-xl text-slate-500 hover:text-slate-855 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center"
+                      className="relative p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300 group"
+                      title="Cart"
                     >
-                      <ShoppingCart className="w-5 h-5" />
+                      <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
                       {cartCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-brand-600 text-white font-bold text-[9px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 animate-bounce">
+                        <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-gold-gradient text-white font-bold text-[10px] rounded-full flex items-center justify-center shadow-glow-gold-sm animate-scale-in px-1">
                           {cartCount}
                         </span>
                       )}
                     </Link>
                     <Link
                       to="/profile"
-                      className="p-2.5 rounded-xl text-slate-500 hover:text-slate-855 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                      className="p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300"
+                      title="Profile"
                     >
                       <User className="w-5 h-5" />
                     </Link>
@@ -114,41 +135,44 @@ const AppLayout = ({ theme, setTheme }) => {
                 )}
 
                 {user?.role === 'restaurant' && (
-                  <Link to="/restaurant/dashboard" className="text-xs font-bold text-slate-600 dark:text-slate-300 hover:underline">
+                  <Link to="/restaurant/dashboard" className="nav-link-royal text-noir-50/70 dark:text-surface-300">
                     Dashboard
                   </Link>
                 )}
 
                 {user?.role === 'delivery_personnel' && (
-                  <Link to="/delivery/orders" className="text-xs font-bold text-slate-600 dark:text-slate-300 hover:underline">
+                  <Link to="/delivery/orders" className="nav-link-royal text-noir-50/70 dark:text-surface-300">
                     Deliveries Portal
                   </Link>
                 )}
 
                 {user?.role === 'admin' && (
-                  <Link to="/admin/dashboard" className="text-xs font-bold text-slate-600 dark:text-slate-300 hover:underline">
+                  <Link to="/admin/dashboard" className="nav-link-royal text-noir-50/70 dark:text-surface-300">
                     Admin Panel
                   </Link>
                 )}
 
+                <div className="w-px h-6 bg-surface-300/50 dark:bg-noir-50/30 mx-1 hidden sm:block"></div>
+
                 <button
                   onClick={handleLogout}
-                  className="p-2.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                  className="p-2.5 rounded-xl text-noir-50/40 dark:text-surface-400/40 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-500/5 transition-all duration-300 active:scale-90"
+                  title="Logout"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
               </>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-750 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-xl text-xs font-bold transition-all"
+                  className="btn-ghost text-xs font-bold px-4 py-2 rounded-xl"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-brand-500/10 transition-all"
+                  className="btn-royal text-xs font-bold px-5 py-2 rounded-xl"
                 >
                   Register
                 </Link>
@@ -157,10 +181,12 @@ const AppLayout = ({ theme, setTheme }) => {
 
           </div>
         </div>
+        {/* Gold accent line at bottom of nav */}
+        <div className="h-px bg-gradient-to-r from-transparent via-royal-500/20 to-transparent"></div>
       </header>
 
-      {/* 2. MAIN LAYOUT AREA */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 relative">
+      {/* ════════ MAIN LAYOUT AREA ════════ */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 relative">
         <Routes>
           {/* Public Auth routes */}
           <Route path="/login" element={<Login />} />
@@ -276,10 +302,10 @@ export const App = () => {
   useEffect(() => {
     if (theme === 'dark') {
       document.body.classList.add('dark');
-      document.body.style.backgroundColor = '#030712'; // darkbg-200
+      document.body.style.backgroundColor = '#0D0D0D';
     } else {
       document.body.classList.remove('dark');
-      document.body.style.backgroundColor = '#f8fafc'; // slate-50
+      document.body.style.backgroundColor = '#FFFDF7';
     }
     localStorage.setItem('theme', theme);
   }, [theme]);

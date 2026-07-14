@@ -6,7 +6,7 @@ import { useSocket } from '../../context/SocketContext.jsx';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import Loader from '../../components/common/Loader.jsx';
-import { Check, Compass, Phone, ShieldCheck, MapPin, Coffee, ArrowLeft } from 'lucide-react';
+import { Check, Compass, Phone, ShieldCheck, MapPin, Coffee, ArrowLeft, Package, Clock, Sparkles, Bike } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 // Fix default Leaflet marker assets in React builds
@@ -49,6 +49,8 @@ const STEPS = [
   { status: 'out_for_delivery', label: 'Out for Delivery', desc: 'Rider is carrying your food' },
   { status: 'delivered', label: 'Delivered', desc: 'Enjoy your food!' }
 ];
+
+const stepIcons = [Package, Check, Coffee, Bike, Sparkles];
 
 export const OrderTracking = () => {
   const { id } = useParams();
@@ -114,8 +116,14 @@ export const OrderTracking = () => {
   if (isLoading) return <Loader type="spinner" />;
   if (isError || !initialData?.success) {
     return (
-      <div className="text-center py-20 text-rose-500 font-bold bg-white rounded-2xl border">
-        Could not load order tracking details.
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <div className="card-royal-static p-8 rounded-2xl text-center max-w-md">
+          <div className="w-16 h-16 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center mx-auto mb-4">
+            <Package className="w-8 h-8 text-red-400" />
+          </div>
+          <p className="text-red-500 dark:text-red-400 font-display font-bold text-lg mb-2">Tracking Unavailable</p>
+          <p className="text-surface-300 dark:text-noir-100 text-sm">Could not load order tracking details.</p>
+        </div>
       </div>
     );
   }
@@ -137,25 +145,37 @@ export const OrderTracking = () => {
   };
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-8 pb-16 animate-fade-in">
+      {/* Back Button */}
       <button
         onClick={() => navigate('/profile')}
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
+        className="group inline-flex items-center gap-2 text-sm font-semibold text-surface-300 dark:text-noir-100 hover:text-royal-500 dark:hover:text-royal-500 transition-colors duration-300"
       >
-        <ArrowLeft className="w-4 h-4" /> Go to Order History
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+        Order History
       </button>
 
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">Track Order</h1>
-          <p className="text-xs font-bold text-slate-400 mt-1">ID: #{order._id}</p>
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in-up">
+        <div className="flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-gold-gradient flex items-center justify-center shadow-glow-gold-sm animate-pulse-soft">
+            <Compass className="w-5.5 h-5.5 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-display font-bold text-noir-600 dark:text-surface-50">
+              Track Order
+            </h1>
+            <p className="text-[11px] font-mono text-surface-300 dark:text-noir-100 mt-0.5">
+              ID: <span className="text-royal-500">#{order._id}</span>
+            </p>
+          </div>
         </div>
         <span
-          className={`px-3 py-1.5 rounded-full text-xs font-extrabold uppercase ${
+          className={`${
             order.paymentStatus === 'paid'
-              ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-              : 'bg-amber-50 text-amber-600 border border-amber-200'
-          }`}
+              ? 'badge-success'
+              : 'badge-warning'
+          } text-xs font-bold`}
         >
           {order.paymentStatus === 'paid' ? '💳 PAID' : '⌛ AWAITING PAYMENT'}
         </span>
@@ -167,47 +187,80 @@ export const OrderTracking = () => {
         <div className="lg:col-span-2 space-y-6">
           
           {/* A. TRACKING TIMELINE */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm space-y-6">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Compass className="w-5 h-5 text-brand-500 animate-spin" /> Delivery Journey
-            </h2>
+          <div className="card-royal-static p-6 rounded-2xl space-y-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-royal-500/10 dark:bg-royal-500/20 flex items-center justify-center">
+                <Compass className="w-4.5 h-4.5 text-royal-500 animate-spin-slow" />
+              </div>
+              <h2 className="text-lg font-display font-bold text-noir-600 dark:text-surface-50">
+                Delivery Journey
+              </h2>
+            </div>
 
             {isCancelled ? (
-              <div className="p-4 bg-rose-50 text-rose-800 dark:bg-rose-950/20 dark:text-rose-400 rounded-2xl border border-rose-200 font-semibold text-sm">
-                ❌ This order has been cancelled.
+              <div className="p-5 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 rounded-2xl border border-red-200 dark:border-red-900/50 font-semibold text-sm flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-lg">❌</span>
+                </div>
+                <div>
+                  <p className="font-bold">Order Cancelled</p>
+                  <p className="text-xs text-red-500 dark:text-red-400/70 mt-0.5">This order has been cancelled.</p>
+                </div>
               </div>
             ) : (
-              <div className="relative pl-6 space-y-8 border-l border-slate-150 dark:border-slate-700 ml-4">
+              <div className="relative pl-8 space-y-1 ml-4">
+                {/* Progress Line Background */}
+                <div className="absolute left-[7px] top-3 bottom-3 w-[2px] bg-surface-100 dark:bg-noir-300 rounded-full" />
+                {/* Active Progress Line */}
+                <div
+                  className="absolute left-[7px] top-3 w-[2px] bg-gold-gradient rounded-full transition-all duration-700 ease-out"
+                  style={{
+                    height: activeStepIdx >= 0 ? `${(activeStepIdx / (STEPS.length - 1)) * 100}%` : '0%',
+                    maxHeight: 'calc(100% - 24px)'
+                  }}
+                />
+
                 {STEPS.map((step, idx) => {
                   const isCompleted = idx <= activeStepIdx;
                   const isActive = idx === activeStepIdx;
+                  const StepIcon = stepIcons[idx];
 
                   return (
-                    <div key={step.status} className="relative flex gap-4">
-                      {/* Check Node circle indicator */}
+                    <div key={step.status} className="relative flex gap-4 py-3">
+                      {/* Node Circle */}
                       <span
-                        className={`absolute -left-[35px] top-0.5 w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all ${
+                        className={`absolute -left-[25px] top-3.5 z-10 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-500 ${
                           isCompleted
-                            ? 'bg-brand-600 border-brand-600 text-white shadow-md'
-                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400'
-                        }`}
+                            ? 'bg-gold-gradient border-royal-500 text-white shadow-glow-gold-sm'
+                            : 'bg-white dark:bg-noir-500 border-surface-200 dark:border-noir-200 text-surface-300 dark:text-noir-100'
+                        } ${isActive ? 'scale-110 animate-pulse-soft' : ''}`}
                       >
-                        {isCompleted ? <Check className="w-3.5 h-3.5" /> : idx + 1}
+                        {isCompleted ? <StepIcon className="w-4 h-4" /> : <span className="text-xs font-bold">{idx + 1}</span>}
                       </span>
 
-                      <div>
+                      {/* Step Info */}
+                      <div className="pl-4">
                         <h3
-                          className={`text-sm font-bold ${
+                          className={`text-sm font-bold transition-colors duration-300 ${
                             isActive
-                              ? 'text-brand-600 dark:text-brand-400'
+                              ? 'text-royal-600 dark:text-royal-500 font-display'
                               : isCompleted
-                              ? 'text-slate-800 dark:text-slate-200'
-                              : 'text-slate-400 dark:text-slate-500'
+                              ? 'text-noir-500 dark:text-surface-100'
+                              : 'text-surface-300 dark:text-noir-200'
                           }`}
                         >
                           {step.label}
+                          {isActive && (
+                            <span className="ml-2 inline-flex items-center gap-1 badge-gold text-[9px] px-2 py-0.5">
+                              <Clock className="w-2.5 h-2.5" /> Current
+                            </span>
+                          )}
                         </h3>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+                        <p className={`text-xs mt-0.5 font-medium ${
+                          isCompleted
+                            ? 'text-surface-300 dark:text-noir-100'
+                            : 'text-surface-200 dark:text-noir-200'
+                        }`}>
                           {step.desc}
                         </p>
                       </div>
@@ -219,12 +272,19 @@ export const OrderTracking = () => {
           </div>
 
           {/* B. LEAFLET LIVE ROUTING MAP */}
-          <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col h-[400px]">
-            <div className="p-4 border-b border-slate-100 dark:border-slate-700 font-bold text-sm text-slate-850 dark:text-white flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-brand-500" /> Live Tracking Map
+          <div className="card-royal-static rounded-2xl overflow-hidden flex flex-col h-[400px] animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <div className="p-4 border-b border-surface-100 dark:border-noir-300 flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-royal-500/10 dark:bg-royal-500/20 flex items-center justify-center">
+                <MapPin className="w-3.5 h-3.5 text-royal-500" />
+              </div>
+              <span className="font-display font-bold text-sm text-noir-600 dark:text-surface-50">Live Tracking Map</span>
+              <div className="ml-auto flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Live</span>
+              </div>
             </div>
             
-            <div className="flex-1 relative bg-slate-100 dark:bg-slate-900">
+            <div className="flex-1 relative bg-surface-100 dark:bg-noir-500">
               <MapContainer
                 key={`${customerLoc.lat}-${customerLoc.lng}`}
                 center={[customerLoc.lat, customerLoc.lng]}
@@ -262,59 +322,84 @@ export const OrderTracking = () => {
           
           {/* C. RIDER ASSIGNMENT CARD */}
           {orderStatus === 'out_for_delivery' && (
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-3xl p-6 shadow-md space-y-4">
-              <span className="text-[10px] font-bold tracking-wider uppercase bg-white/20 px-2 py-0.5 rounded">
-                Delivery Executive
-              </span>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl font-bold">
-                  🏍️
+            <div className="relative overflow-hidden rounded-2xl animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
+              <div className="absolute inset-0 bg-gold-gradient opacity-90" />
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
+              <div className="relative p-6 text-white space-y-4">
+                <span className="badge-gold text-[10px] font-bold tracking-[0.15em] uppercase bg-white/20 border-white/30">
+                  🏍️ Delivery Executive
+                </span>
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl font-bold border border-white/20">
+                    <Bike className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-bold text-lg">{riderInfo?.name || 'Rohan (Assigned)'}</h3>
+                    <p className="text-sm text-white/80 font-semibold flex items-center gap-1.5 mt-1">
+                      <Phone className="w-3.5 h-3.5" /> +91 {riderInfo?.phone || '9876543213'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold">{riderInfo?.name || 'Rohan (Assigned)'}</h3>
-                  <p className="text-xs text-white/80 font-semibold flex items-center gap-1 mt-0.5">
-                    <Phone className="w-3.5 h-3.5" /> +91 {riderInfo?.phone || '9876543213'}
-                  </p>
-                </div>
+                <p className="text-xs font-semibold text-white/90 leading-relaxed">
+                  Rider has collected your order and is on the way to your location.
+                </p>
               </div>
-              <p className="text-xs font-semibold text-white/95">
-                Rider has collected your order and is driving to your location.
-              </p>
             </div>
           )}
 
           {/* D. ORDER DETAILS LIST */}
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-slate-800 dark:text-white pb-2.5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-1.5">
-              <Coffee className="w-4 h-4 text-brand-500" /> Items Summary
-            </h3>
+          <div className="glass-card p-6 rounded-2xl space-y-4 animate-fade-in-up" style={{ animationDelay: '0.25s' }}>
+            <div className="flex items-center gap-2.5 pb-3">
+              <div className="w-7 h-7 rounded-lg bg-gold-gradient flex items-center justify-center shadow-glow-gold-sm">
+                <Coffee className="w-3.5 h-3.5 text-white" />
+              </div>
+              <h3 className="text-sm font-display font-bold text-noir-600 dark:text-surface-50">
+                Order Summary
+              </h3>
+            </div>
+
+            <div className="gold-divider" />
             
-            <div className="space-y-3.5 max-h-48 overflow-y-auto pr-1">
+            {/* Items */}
+            <div className="space-y-3 max-h-48 overflow-y-auto pr-1 scrollbar-thin">
               {order.items.map((i, idx) => (
-                <div key={idx} className="flex justify-between text-xs font-semibold text-slate-700 dark:text-slate-350">
-                  <span>{i.quantity}x {i.name}</span>
-                  <span className="text-slate-900 dark:text-white font-bold">₹{i.price * i.quantity}</span>
+                <div key={idx} className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-md bg-royal-500/10 dark:bg-royal-500/20 text-royal-600 dark:text-royal-500 text-[10px] font-bold flex items-center justify-center">
+                      {i.quantity}x
+                    </span>
+                    <span className="text-xs font-semibold text-noir-400 dark:text-surface-200">{i.name}</span>
+                  </div>
+                  <span className="text-xs font-bold text-noir-600 dark:text-surface-50 flex-shrink-0">₹{i.price * i.quantity}</span>
                 </div>
               ))}
             </div>
 
-            <div className="space-y-3.5 text-xs font-semibold text-slate-500 border-t border-slate-100 dark:border-slate-700 pt-4">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="text-slate-800 dark:text-slate-200">₹{order.totalAmount - order.deliveryFee}</span>
+            <div className="gold-divider" />
+
+            {/* Price Breakdown */}
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between font-semibold">
+                <span className="text-surface-300 dark:text-noir-100">Subtotal</span>
+                <span className="text-noir-500 dark:text-surface-100">₹{order.totalAmount - order.deliveryFee}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Delivery Partner Fee</span>
-                <span className="text-slate-800 dark:text-slate-200">₹{order.deliveryFee}</span>
+              <div className="flex justify-between font-semibold">
+                <span className="text-surface-300 dark:text-noir-100">Delivery Partner Fee</span>
+                <span className="text-noir-500 dark:text-surface-100">₹{order.deliveryFee}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-slate-900 dark:text-white pt-3 border-t border-slate-50">
-                <span>Total Paid</span>
-                <span className="text-brand-600">₹{order.totalAmount}</span>
+
+              <div className="gold-divider" />
+
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-sm font-display font-bold text-noir-600 dark:text-surface-50">Total Paid</span>
+                <span className="text-lg font-display font-bold text-royal-500">₹{order.totalAmount}</span>
               </div>
             </div>
             
-            <div className="flex items-center gap-1.5 justify-center text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 py-2 rounded-xl border border-emerald-100 dark:border-emerald-900/50 mt-4">
-              <ShieldCheck className="w-4 h-4" /> Secure SSL Food Delivery
+            {/* Security Badge */}
+            <div className="flex items-center gap-2 justify-center text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 py-2.5 rounded-xl border border-emerald-100 dark:border-emerald-900/50 mt-3">
+              <ShieldCheck className="w-4 h-4" />
+              Secure SSL Food Delivery
             </div>
           </div>
 

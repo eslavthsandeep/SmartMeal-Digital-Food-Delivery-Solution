@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore.js';
 import { useToastStore } from '../store/toastStore.js';
 import { authAPI } from '../services/api.js';
-import { LogIn, Key, Mail, ShieldAlert } from 'lucide-react';
+import { LogIn, Key, Mail, ShieldAlert, Crown, Sparkles } from 'lucide-react';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
@@ -75,35 +75,44 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50 dark:bg-slate-900 transition-colors">
-      <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-100 dark:border-slate-700 shadow-xl relative overflow-hidden">
-        {/* Decorative background light */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-full blur-2xl -mr-16 -mt-16"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -ml-16 -mb-16"></div>
+    <div className="min-h-screen bg-mesh-gold flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Decorative gold radial gradient blobs */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-royal-500/15 rounded-full blur-3xl animate-float pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-96 h-96 bg-royal-600/10 rounded-full blur-3xl animate-pulse-soft pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-royal-500/5 to-transparent rounded-full pointer-events-none"></div>
 
+      <div className="w-full max-w-md glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden animate-fade-in-up">
+        {/* Decorative corner accents */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-royal-500/10 to-transparent rounded-full blur-2xl -mr-20 -mt-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-royal-600/10 to-transparent rounded-full blur-2xl -ml-20 -mb-20 pointer-events-none"></div>
+
+        {/* Header */}
         <div className="text-center mb-8 relative">
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white font-sans tracking-tight">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-royal-500/10 dark:bg-royal-500/20 border border-royal-500/20 mb-4 animate-bounce-soft">
+            <Crown className="w-8 h-8 text-royal-500" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-gold-gradient tracking-tight">
             Welcome Back
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">
-            Sign in to start ordering or managing food
+          <p className="text-noir-200 dark:text-surface-300 mt-2 text-sm font-sans">
+            Sign in to your premium dining experience
           </p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5 relative">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+            <label className="label-royal">
               Email Address
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-royal-500/60 dark:text-royal-500/50">
                 <Mail className="w-5 h-5" />
               </span>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                className="input-royal pl-11"
                 placeholder="you@example.com"
                 required
               />
@@ -111,18 +120,18 @@ export const Login = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+            <label className="label-royal">
               Password
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-royal-500/60 dark:text-royal-500/50">
                 <Key className="w-5 h-5" />
               </span>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all"
+                className="input-royal pl-11"
                 placeholder="••••••••"
                 required
               />
@@ -132,7 +141,7 @@ export const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-brand-500/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
+            className="btn-royal w-full py-3.5 flex items-center justify-center gap-2 text-base font-semibold"
           >
             {loading ? (
               <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -146,47 +155,50 @@ export const Login = () => {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-noir-200 dark:text-surface-300">
             Don't have an account?{' '}
-            <Link to="/register" className="text-brand-500 hover:text-brand-600 font-semibold underline underline-offset-4">
+            <Link to="/register" className="text-royal-500 hover:text-royal-600 font-semibold underline underline-offset-4 transition-colors duration-300">
               Register here
             </Link>
           </p>
         </div>
 
-        {/* Demo Fast Login Shortcuts (Extremely helpful for Vivas) */}
-        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700">
-          <span className="flex items-center gap-1.5 justify-center text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-3">
-            <ShieldAlert className="w-4 h-4" /> Demo Account Shortcuts
+        {/* Demo Fast Login Shortcuts */}
+        <div className="mt-8 pt-6 relative">
+          <div className="gold-divider mb-6"></div>
+          <span className="flex items-center gap-2 justify-center text-xs font-semibold text-royal-500 dark:text-royal-500 uppercase tracking-widest mb-4">
+            <Sparkles className="w-4 h-4 animate-pulse-soft" />
+            Demo Account Shortcuts
+            <Sparkles className="w-4 h-4 animate-pulse-soft" />
           </span>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-2 gap-3 text-xs">
             <button
               onClick={() => handleDemoLogin('customer')}
               type="button"
-              className="py-2 px-3 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-slate-950 dark:hover:text-brand-400 rounded-lg transition-colors font-medium text-left"
+              className="group py-3 px-4 rounded-xl border border-royal-500/20 dark:border-royal-500/15 bg-surface-50/50 dark:bg-noir-500/50 text-noir-300 dark:text-surface-200 hover:border-royal-500/50 hover:bg-royal-500/5 dark:hover:bg-royal-500/10 transition-all duration-300 font-medium text-left hover:shadow-glow-gold-sm active:scale-[0.98]"
             >
-              🔑 Customer
+              <span className="text-base">👑</span> Customer
             </button>
             <button
               onClick={() => handleDemoLogin('restaurant')}
               type="button"
-              className="py-2 px-3 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-slate-950 dark:hover:text-brand-400 rounded-lg transition-colors font-medium text-left"
+              className="group py-3 px-4 rounded-xl border border-royal-500/20 dark:border-royal-500/15 bg-surface-50/50 dark:bg-noir-500/50 text-noir-300 dark:text-surface-200 hover:border-royal-500/50 hover:bg-royal-500/5 dark:hover:bg-royal-500/10 transition-all duration-300 font-medium text-left hover:shadow-glow-gold-sm active:scale-[0.98]"
             >
-              🔑 Restaurant Owner
+              <span className="text-base">🏪</span> Restaurant Owner
             </button>
             <button
               onClick={() => handleDemoLogin('delivery')}
               type="button"
-              className="py-2 px-3 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-slate-950 dark:hover:text-brand-400 rounded-lg transition-colors font-medium text-left"
+              className="group py-3 px-4 rounded-xl border border-royal-500/20 dark:border-royal-500/15 bg-surface-50/50 dark:bg-noir-500/50 text-noir-300 dark:text-surface-200 hover:border-royal-500/50 hover:bg-royal-500/5 dark:hover:bg-royal-500/10 transition-all duration-300 font-medium text-left hover:shadow-glow-gold-sm active:scale-[0.98]"
             >
-              🔑 Delivery Agent
+              <span className="text-base">🚴</span> Delivery Agent
             </button>
             <button
               onClick={() => handleDemoLogin('admin')}
               type="button"
-              className="py-2 px-3 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-slate-950 dark:hover:text-brand-400 rounded-lg transition-colors font-medium text-left"
+              className="group py-3 px-4 rounded-xl border border-royal-500/20 dark:border-royal-500/15 bg-surface-50/50 dark:bg-noir-500/50 text-noir-300 dark:text-surface-200 hover:border-royal-500/50 hover:bg-royal-500/5 dark:hover:bg-royal-500/10 transition-all duration-300 font-medium text-left hover:shadow-glow-gold-sm active:scale-[0.98]"
             >
-              🔑 System Admin
+              <span className="text-base">⚙️</span> System Admin
             </button>
           </div>
         </div>

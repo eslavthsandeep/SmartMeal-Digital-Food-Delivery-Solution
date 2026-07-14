@@ -1,35 +1,196 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════
+   BASE LAYER — Global Defaults
+   ═══════════════════════════════════════════ */
 @layer base {
+  * {
+    @apply transition-colors duration-200;
+  }
+
   body {
-    @apply bg-slate-50 text-slate-900 font-sans transition-colors duration-300 antialiased;
+    @apply bg-surface-50 text-noir-400 font-sans antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
-  
+
   body.dark {
-    @apply bg-darkbg-200 text-slate-100;
+    @apply bg-noir-400 text-surface-200;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display font-bold tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-royal-500/30 text-royal-900;
+  }
+
+  .dark ::selection {
+    @apply bg-royal-500/40 text-royal-100;
   }
 }
 
-/* Glassmorphism Classes */
-.glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+/* ═══════════════════════════════════════════
+   GLASSMORPHISM
+   ═══════════════════════════════════════════ */
+.glass-card {
+  background: rgba(255, 253, 247, 0.75);
+  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  border: 1px solid rgba(218, 165, 32, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
 }
 
-.dark .glass {
-  background: rgba(17, 24, 39, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.dark .glass-card {
+  background: rgba(23, 23, 23, 0.7);
+  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  border: 1px solid rgba(218, 165, 32, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-/* Custom Scrollbar */
+.glass-nav {
+  background: rgba(255, 253, 247, 0.82);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.1);
+}
+
+.dark .glass-nav {
+  background: rgba(13, 13, 13, 0.85);
+  backdrop-filter: blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 1px solid rgba(218, 165, 32, 0.06);
+}
+
+/* ═══════════════════════════════════════════
+   CARD EFFECTS
+   ═══════════════════════════════════════════ */
+.card-royal {
+  @apply bg-white dark:bg-noir-200 rounded-2xl border border-surface-300/50 dark:border-noir-50/30;
+  @apply shadow-card dark:shadow-card-dark;
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-royal:hover {
+  @apply shadow-card-hover dark:shadow-card-hover-dark;
+  @apply -translate-y-1 border-royal-500/20 dark:border-royal-500/15;
+}
+
+.card-royal-static {
+  @apply bg-white dark:bg-noir-200 rounded-2xl border border-surface-300/50 dark:border-noir-50/30;
+  @apply shadow-card dark:shadow-card-dark;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+.btn-royal {
+  @apply px-6 py-2.5 bg-gold-gradient text-white font-semibold rounded-xl;
+  @apply shadow-btn hover:shadow-btn-hover;
+  @apply transition-all duration-300 ease-out;
+  @apply hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98];
+  @apply relative overflow-hidden;
+}
+
+.btn-royal::after {
+  content: '';
+  @apply absolute inset-0 bg-white/0 transition-all duration-300;
+}
+
+.btn-royal:hover::after {
+  @apply bg-white/10;
+}
+
+.btn-royal-outline {
+  @apply px-6 py-2.5 bg-transparent font-semibold rounded-xl;
+  @apply border-2 border-royal-500 text-royal-600 dark:text-royal-400;
+  @apply transition-all duration-300 ease-out;
+  @apply hover:bg-royal-500/10 hover:-translate-y-0.5 active:translate-y-0;
+}
+
+.btn-ghost {
+  @apply px-4 py-2 bg-transparent font-medium rounded-xl;
+  @apply text-noir-50 dark:text-surface-300;
+  @apply transition-all duration-300 ease-out;
+  @apply hover:bg-surface-300/30 dark:hover:bg-noir-50/30;
+  @apply active:scale-[0.98];
+}
+
+.btn-danger {
+  @apply px-5 py-2.5 bg-status-danger text-white font-semibold rounded-xl;
+  @apply transition-all duration-300 ease-out;
+  @apply hover:bg-red-700 hover:-translate-y-0.5 active:translate-y-0;
+  @apply shadow-sm hover:shadow-md;
+}
+
+/* ═══════════════════════════════════════════
+   FORM INPUTS
+   ═══════════════════════════════════════════ */
+.input-royal {
+  @apply w-full px-4 py-3 rounded-xl font-sans text-sm;
+  @apply bg-surface-100 dark:bg-noir-200 border border-surface-300 dark:border-noir-50/50;
+  @apply text-noir-400 dark:text-surface-200 placeholder-surface-400 dark:placeholder-noir-50;
+  @apply transition-all duration-300 ease-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-royal-500/40 focus:border-royal-500;
+  @apply hover:border-royal-400/50;
+}
+
+.input-royal:focus {
+  box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1), 0 0 12px rgba(218, 165, 32, 0.06);
+}
+
+.select-royal {
+  @apply input-royal appearance-none cursor-pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23B8860B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 2.5rem;
+}
+
+.label-royal {
+  @apply block text-xs font-semibold uppercase tracking-wider;
+  @apply text-noir-50/70 dark:text-surface-400/70 mb-1.5;
+}
+
+/* ═══════════════════════════════════════════
+   TEXT EFFECTS
+   ═══════════════════════════════════════════ */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #B8860B 0%, #DAA520 40%, #F5C842 70%, #DAA520 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #B8860B 0%,
+    #F5C842 25%,
+    #DAA520 50%,
+    #F5C842 75%,
+    #B8860B 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-gold 3s linear infinite;
+}
+
+@keyframes shimmer-gold {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════ */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -40,51 +201,195 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 rounded-full hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600;
+  @apply rounded-full;
+  background: rgba(218, 165, 32, 0.25);
 }
 
-/* Animations */
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(218, 165, 32, 0.45);
 }
 
-.animate-pulse-soft {
-  animation: pulse-soft 3s infinite ease-in-out;
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(218, 165, 32, 0.15);
 }
 
-/* Shimmer Loading Skeleton */
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(218, 165, 32, 0.3);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════
+   STATUS BADGES
+   ═══════════════════════════════════════════ */
+.badge {
+  @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider;
+}
+
+.badge-gold {
+  @apply badge bg-royal-500/15 text-royal-700 dark:bg-royal-500/20 dark:text-royal-300;
+}
+
+.badge-success {
+  @apply badge bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300;
+}
+
+.badge-danger {
+  @apply badge bg-red-500/15 text-red-700 dark:bg-red-500/20 dark:text-red-300;
+}
+
+.badge-info {
+  @apply badge bg-sky-500/15 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300;
+}
+
+.badge-warning {
+  @apply badge bg-amber-500/15 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300;
+}
+
+.badge-neutral {
+  @apply badge bg-gray-500/10 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400;
+}
+
+/* ═══════════════════════════════════════════
+   TAB NAVIGATION
+   ═══════════════════════════════════════════ */
+.tab-royal {
+  @apply relative px-5 py-2.5 text-sm font-semibold;
+  @apply text-noir-50/60 dark:text-surface-400/60;
+  @apply transition-all duration-300 cursor-pointer;
+  @apply hover:text-royal-600 dark:hover:text-royal-400;
+}
+
+.tab-royal.active {
+  @apply text-royal-600 dark:text-royal-400;
+}
+
+.tab-royal.active::after {
+  content: '';
+  @apply absolute bottom-0 left-2 right-2 h-0.5 rounded-full;
+  @apply bg-gold-gradient;
+}
+
+/* ═══════════════════════════════════════════
+   LOADING SKELETON
+   ═══════════════════════════════════════════ */
 .shimmer {
   background: linear-gradient(
     90deg,
-    rgba(226, 232, 240, 0) 0%,
-    rgba(226, 232, 240, 0.8) 50%,
-    rgba(226, 232, 240, 0) 100%
+    rgba(218, 165, 32, 0) 0%,
+    rgba(218, 165, 32, 0.06) 50%,
+    rgba(218, 165, 32, 0) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer-bg 1.5s infinite;
 }
 
 .dark .shimmer {
   background: linear-gradient(
     90deg,
-    rgba(31, 41, 55, 0) 0%,
-    rgba(31, 41, 55, 0.8) 50%,
-    rgba(31, 41, 55, 0) 100%
+    rgba(218, 165, 32, 0) 0%,
+    rgba(218, 165, 32, 0.04) 50%,
+    rgba(218, 165, 32, 0) 100%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer-bg 1.5s infinite;
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
+@keyframes shimmer-bg {
+  0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
-/* Leaflet Map Height Fixes */
+/* ═══════════════════════════════════════════
+   VEG / NON-VEG INDICATORS
+   ═══════════════════════════════════════════ */
+.veg-indicator {
+  @apply w-4 h-4 border-2 border-green-600 rounded-sm flex items-center justify-center;
+}
+.veg-indicator::after {
+  content: '';
+  @apply w-2 h-2 bg-green-600 rounded-full;
+}
+.nonveg-indicator {
+  @apply w-4 h-4 border-2 border-red-600 rounded-sm flex items-center justify-center;
+}
+.nonveg-indicator::after {
+  content: '';
+  @apply w-2 h-2 bg-red-600 rounded-full;
+}
+
+/* ═══════════════════════════════════════════
+   TOOLTIP
+   ═══════════════════════════════════════════ */
+.tooltip {
+  @apply relative;
+}
+.tooltip::after {
+  content: attr(data-tooltip);
+  @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1;
+  @apply bg-noir-400 dark:bg-noir-100 text-white text-[10px] font-medium rounded-lg;
+  @apply opacity-0 invisible transition-all duration-200 whitespace-nowrap pointer-events-none;
+}
+.tooltip:hover::after {
+  @apply opacity-100 visible;
+}
+
+/* ═══════════════════════════════════════════
+   LEAFLET MAP OVERRIDES
+   ═══════════════════════════════════════════ */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   z-index: 10;
 }
+
+/* ═══════════════════════════════════════════
+   ANIMATED BACKGROUNDS
+   ═══════════════════════════════════════════ */
+.bg-mesh-gold {
+  background-color: #FFFDF7;
+  background-image:
+    radial-gradient(at 20% 30%, rgba(218,165,32,0.08) 0, transparent 60%),
+    radial-gradient(at 80% 20%, rgba(245,200,66,0.06) 0, transparent 50%),
+    radial-gradient(at 60% 80%, rgba(184,134,11,0.05) 0, transparent 55%);
+}
+
+.dark .bg-mesh-gold {
+  background-color: #0D0D0D;
+  background-image:
+    radial-gradient(at 20% 30%, rgba(218,165,32,0.04) 0, transparent 60%),
+    radial-gradient(at 80% 20%, rgba(245,200,66,0.03) 0, transparent 50%),
+    radial-gradient(at 60% 80%, rgba(184,134,11,0.02) 0, transparent 55%);
+}
+
+/* ═══════════════════════════════════════════
+   MISCELLANEOUS
+   ═══════════════════════════════════════════ */
+.gold-divider {
+  @apply h-px w-full;
+  background: linear-gradient(90deg, transparent, rgba(218,165,32,0.3), transparent);
+}
+
+.dark .gold-divider {
+  background: linear-gradient(90deg, transparent, rgba(218,165,32,0.15), transparent);
+}
+
+.stagger-child {
+  @apply animate-fade-in-up;
+}
+.stagger-child:nth-child(1) { animation-delay: 0ms; }
+.stagger-child:nth-child(2) { animation-delay: 60ms; }
+.stagger-child:nth-child(3) { animation-delay: 120ms; }
+.stagger-child:nth-child(4) { animation-delay: 180ms; }
+.stagger-child:nth-child(5) { animation-delay: 240ms; }
+.stagger-child:nth-child(6) { animation-delay: 300ms; }
+.stagger-child:nth-child(7) { animation-delay: 360ms; }
+.stagger-child:nth-child(8) { animation-delay: 420ms; }
+.stagger-child:nth-child(n+9) { animation-delay: 480ms; }
