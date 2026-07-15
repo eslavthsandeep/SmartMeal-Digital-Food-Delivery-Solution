@@ -3,7 +3,11 @@ import { Server } from 'socket.io';
 export const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: '*', // Allow all client connections
+      origin: [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'https://frontend-bice-one-71.vercel.app'
+      ],
       methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
       credentials: true
     }

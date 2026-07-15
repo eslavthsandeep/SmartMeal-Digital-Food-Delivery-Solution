@@ -26,7 +26,11 @@ app.use(helmet({
   crossOriginResourcePolicy: false // Allows loading images from backend statically
 }));
 app.use(cors({
-  origin: true, // Allow client origin
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://frontend-bice-one-71.vercel.app'
+  ],
   credentials: true
 }));
 
