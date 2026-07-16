@@ -120,43 +120,43 @@ export const Restaurant = () => {
       </button>
 
       {/* 1. RESTAURANT HERO BLOCK */}
-      <div className="rounded-3xl overflow-hidden shadow-card animate-fade-in-up">
-        <div className="relative h-72 md:h-80 w-full">
+      <div className="rounded-3xl overflow-hidden shadow-card animate-fade-in-up bg-white dark:bg-noir-200 md:bg-transparent">
+        <div className="relative h-48 md:h-80 w-full">
           <img src={restaurant.coverImage} alt={restaurant.name} className="h-full w-full object-cover" />
-          {/* Multi-layer gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-noir-600 via-noir-600/40 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-noir-600/30 to-transparent"></div>
-          
-          {/* Glass card overlay with restaurant info */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-            <div className="glass-card rounded-2xl p-5 md:p-6 max-w-2xl space-y-3">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1.5">
-                  <h1 className="font-display text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
-                    {restaurant.name}
-                  </h1>
-                  <p className="text-sm text-surface-200/90 font-medium">
-                    {restaurant.cuisines.join(' • ')}
-                  </p>
-                </div>
-                <div className="flex-shrink-0 bg-royal-500/20 backdrop-blur-sm rounded-xl px-3 py-1.5 border border-royal-500/30">
-                  <div className="flex items-center gap-1.5">
-                    <Star className="w-4 h-4 fill-royal-500 stroke-royal-500" />
-                    <span className="text-white font-bold text-sm">{restaurant.rating}</span>
-                  </div>
+          {/* Multi-layer gradient overlay (visible on desktop) */}
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-noir-600 via-noir-600/40 to-transparent"></div>
+          <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-noir-600/30 to-transparent"></div>
+        </div>
+        
+        {/* Glass card overlay with restaurant info (relative stack on mobile, absolute on desktop) */}
+        <div className="relative md:absolute md:bottom-0 left-0 right-0 p-4 md:p-8 z-10">
+          <div className="glass-card rounded-2xl p-4 md:p-6 max-w-2xl space-y-3 !border-surface-200/40 dark:!border-noir-50/10 md:!border-royal-500/12">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1.5">
+                <h1 className="font-display text-xl md:text-3xl font-bold text-noir-600 dark:text-surface-50 md:text-white md:drop-shadow-lg">
+                  {restaurant.name}
+                </h1>
+                <p className="text-xs md:text-sm text-noir-200 dark:text-surface-300 md:text-surface-200/90 font-medium">
+                  {restaurant.cuisines.join(' • ')}
+                </p>
+              </div>
+              <div className="flex-shrink-0 bg-royal-500/20 backdrop-blur-sm rounded-xl px-2.5 py-1.5 border border-royal-500/30">
+                <div className="flex items-center gap-1.5">
+                  <Star className="w-3.5 h-3.5 fill-royal-500 stroke-royal-500" />
+                  <span className="text-noir-600 dark:text-surface-50 md:text-white font-bold text-xs md:text-sm">{restaurant.rating}</span>
                 </div>
               </div>
-              
-              <div className="flex flex-wrap gap-4 items-center text-xs font-semibold text-surface-200/80">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-royal-500" />
-                  <span>30-40 mins delivery</span>
-                </div>
-                <div className="w-1 h-1 rounded-full bg-surface-300/40"></div>
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-royal-500" />
-                  <span>{restaurant.address.addressLine}, {restaurant.address.city}</span>
-                </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-x-4 gap-y-2 items-center text-[11px] md:text-xs font-semibold text-noir-200 dark:text-surface-300 md:text-surface-200/80">
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-royal-500" />
+                <span>30-40 mins delivery</span>
+              </div>
+              <div className="w-1 h-1 rounded-full bg-surface-300/40 hidden sm:block"></div>
+              <div className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-royal-500" />
+                <span>{restaurant.address.addressLine}, {restaurant.address.city}</span>
               </div>
             </div>
           </div>
@@ -200,20 +200,20 @@ export const Restaurant = () => {
                 return (
                   <div
                     key={item._id}
-                    className="card-royal flex gap-5 p-5 rounded-2xl justify-between group"
+                    className="card-royal flex gap-3 sm:gap-5 p-3.5 sm:p-5 rounded-2xl justify-between group"
                   >
                     {/* Item details */}
-                    <div className="flex-1 space-y-2.5 pr-4">
+                    <div className="flex-1 space-y-2 pr-2 md:pr-4 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className={item.isVeg ? 'veg-indicator' : 'nonveg-indicator'}></span>
-                        <h3 className="font-bold text-noir-600 dark:text-surface-50 text-base">
+                        <h3 className="font-bold text-noir-600 dark:text-surface-50 text-sm md:text-base line-clamp-1">
                           {item.name}
                         </h3>
                       </div>
-                      <p className="text-sm font-bold text-royal-600 dark:text-royal-400">
+                      <p className="text-xs md:text-sm font-bold text-royal-600 dark:text-royal-400">
                         ₹{item.price}
                       </p>
-                      <p className="text-xs text-noir-200 dark:text-surface-300 max-w-xl font-medium leading-relaxed">
+                      <p className="text-[11px] md:text-xs text-noir-200 dark:text-surface-300 max-w-xl font-medium leading-relaxed line-clamp-2 md:line-clamp-none">
                         {item.description}
                       </p>
                     </div>
@@ -224,7 +224,7 @@ export const Restaurant = () => {
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-28 h-28 rounded-2xl object-cover bg-surface-100 dark:bg-noir-400 border-2 border-surface-100 dark:border-noir-400 group-hover:scale-105 transition-transform duration-500"
+                          className="w-20 h-20 sm:w-28 sm:h-28 rounded-2xl object-cover bg-surface-100 dark:bg-noir-400 border-2 border-surface-100 dark:border-noir-400 group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
                       
@@ -265,7 +265,7 @@ export const Restaurant = () => {
 
       {/* 3. FLOATING CART PREVIEW BAR */}
       {cartCount > 0 && cartRestaurantId === restaurant._id && (
-        <div className="fixed bottom-6 left-6 right-6 z-40 glass-card p-4 rounded-2xl shadow-glow-gold flex items-center justify-between animate-slide-up max-w-4xl mx-auto border border-royal-500/30">
+        <div className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-6 md:right-6 z-40 glass-card p-4 rounded-2xl shadow-glow-gold flex items-center justify-between animate-slide-up max-w-4xl mx-auto border border-royal-500/30">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-gold-gradient rounded-xl shadow-glow-gold-sm">
               <ShoppingBag className="w-5 h-5 text-white" />

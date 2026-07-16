@@ -48,7 +48,7 @@ export const Home = () => {
     <div className="space-y-12 pb-20">
 
       {/* ═══ GRAND HERO SECTION ═══ */}
-      <section className="relative bg-hero-light dark:bg-hero-dark rounded-3xl overflow-hidden py-20 px-8 md:px-16 shadow-glow-gold-sm animate-fade-in">
+      <section className="relative bg-hero-light dark:bg-hero-dark rounded-3xl overflow-hidden py-12 px-4 md:py-20 md:px-16 shadow-glow-gold-sm animate-fade-in">
         {/* Decorative dot pattern */}
         <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#DAA520_1px,transparent_1px)] [background-size:20px_20px]"></div>
         
@@ -74,7 +74,7 @@ export const Home = () => {
           </p>
 
           {/* Glass search bar */}
-          <form onSubmit={handleSearchSubmit} className="glass-card !p-2 flex gap-2 max-w-lg animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <form onSubmit={handleSearchSubmit} className="glass-card !p-2 flex flex-col sm:flex-row gap-2 max-w-lg animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-royal-500/60 w-5 h-5" />
               <input
@@ -87,7 +87,7 @@ export const Home = () => {
             </div>
             <button
               type="submit"
-              className="btn-royal px-6 !rounded-xl text-sm flex items-center gap-2"
+              className="btn-royal px-6 !rounded-xl text-sm flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <Search className="w-4 h-4" />
               Search

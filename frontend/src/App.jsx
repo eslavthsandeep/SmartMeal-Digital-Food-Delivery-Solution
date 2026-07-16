@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SocketProvider } from './context/SocketContext.jsx';
 import { useAuthStore } from './store/authStore.js';
@@ -56,6 +56,7 @@ const AppLayout = ({ theme, setTheme }) => {
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     clearCredentials();
@@ -91,7 +92,7 @@ const AppLayout = ({ theme, setTheme }) => {
             {isAuthenticated && user?.role === 'customer' && (
               <Link
                 to="/search"
-                className="p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300"
+                className="hidden md:inline-flex p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300"
                 title="Search"
               >
                 <SearchIcon className="w-5 h-5" />
@@ -114,7 +115,7 @@ const AppLayout = ({ theme, setTheme }) => {
                   <>
                     <Link
                       to="/cart"
-                      className="relative p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300 group"
+                      className="hidden md:inline-flex relative p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300 group"
                       title="Cart"
                     >
                       <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -126,7 +127,7 @@ const AppLayout = ({ theme, setTheme }) => {
                     </Link>
                     <Link
                       to="/profile"
-                      className="p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300"
+                      className="hidden md:inline-flex p-2.5 rounded-xl text-noir-50/60 dark:text-surface-400/60 hover:text-royal-600 dark:hover:text-royal-400 hover:bg-royal-500/5 transition-all duration-300"
                       title="Profile"
                     >
                       <User className="w-5 h-5" />
@@ -186,7 +187,7 @@ const AppLayout = ({ theme, setTheme }) => {
       </header>
 
       {/* ════════ MAIN LAYOUT AREA ════════ */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 relative">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 pt-6 pb-24 md:pb-8 relative">
         <Routes>
           {/* Public Auth routes */}
           <Route path="/login" element={<Login />} />
@@ -290,6 +291,68 @@ const AppLayout = ({ theme, setTheme }) => {
 
       {/* Central notifications toasts */}
       <ToastContainer />
+
+      {/* ════════ MOBILE BOTTOM NAVIGATION BAR ════════ */}
+      {isAuthenticated && user?.role === 'customer' && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden glass-nav shadow-glow-gold-sm border-t border-royal-500/10 flex justify-around items-center h-16 px-2">
+          {/* Browse Tab */}
+          <Link
+            to="/"
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-300 ${
+              location.pathname === '/'
+                ? 'text-royal-600 dark:text-royal-400 scale-105 font-bold'
+                : 'text-noir-50/50 dark:text-surface-400/50 hover:text-royal-600'
+            }`}
+          >
+            <UtensilsCrossed className="w-5 h-5" />
+            <span className="text-[10px] mt-1 tracking-tight">Browse</span>
+          </Link>
+
+          {/* Search Tab */}
+          <Link
+            to="/search"
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-300 ${
+              location.pathname === '/search'
+                ? 'text-royal-600 dark:text-royal-400 scale-105 font-bold'
+                : 'text-noir-50/50 dark:text-surface-400/50 hover:text-royal-600'
+            }`}
+          >
+            <SearchIcon className="w-5 h-5" />
+            <span className="text-[10px] mt-1 tracking-tight">Search</span>
+          </Link>
+
+          {/* Cart Tab */}
+          <Link
+            to="/cart"
+            className={`relative flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-300 ${
+              location.pathname === '/cart'
+                ? 'text-royal-600 dark:text-royal-400 scale-105 font-bold'
+                : 'text-noir-50/50 dark:text-surface-400/50 hover:text-royal-600'
+            }`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {cartCount > 0 && (
+              <span className="absolute top-1.5 right-6 min-w-[16px] h-[16px] bg-gold-gradient text-white font-bold text-[9px] rounded-full flex items-center justify-center px-1">
+                {cartCount}
+              </span>
+            )}
+            <span className="text-[10px] mt-1 tracking-tight">Cart</span>
+          </Link>
+
+          {/* Profile Tab */}
+          <Link
+            to="/profile"
+            className={`flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-300 ${
+              location.pathname === '/profile'
+                ? 'text-royal-600 dark:text-royal-400 scale-105 font-bold'
+                : 'text-noir-50/50 dark:text-surface-400/50 hover:text-royal-600'
+            }`}
+          >
+            <User className="w-5 h-5" />
+            <span className="text-[10px] mt-1 tracking-tight">Profile</span>
+          </Link>
+        </div>
+      )}
 
     </div>
   );
